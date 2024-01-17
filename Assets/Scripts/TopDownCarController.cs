@@ -52,10 +52,14 @@ public class TopDownCarController : MonoBehaviour
 		velocityVsUp = Vector2.Dot(transform.up, carRigidbody2.velocity);
 		if(accelerationInput != 0)
 		{
-			Debug.Log("Acce: "+ accelerationInput);
+			Debug.Log("transform.up: " + transform.up);
+			Debug.Log("transform.right: " + transform.right);
 
+			Debug.Log("carRigidbody2.velocity: " + carRigidbody2.velocity);
+
+			Debug.Log("Acce: "+ accelerationInput);
 		}
-		if(steeringInput != 0)
+		if (steeringInput != 0)
 		{
 			Debug.Log("Steering: " + steeringInput);
 
@@ -110,6 +114,37 @@ public class TopDownCarController : MonoBehaviour
 
 		carRigidbody2.velocity = forwardVelocity + rightVelocity * driftFactor;
 
+	}
+
+	float GetLateralVelocity()
+	{
+		//return how fast the car is going sideways
+		return Vector2.Dot(transform.right, carRigidbody2.velocity);
+	}
+
+	public bool IsTireScreeching(out float lateralVelocity, out bool isBraking)
+	{
+		lateralVelocity = GetLateralVelocity();
+		isBraking = false;
+
+		//check if car is moving forward and if the player is hitting the brake. 
+		if(accelerationInput < 0 && velocityVsUp > 0)
+		{
+			isBraking = true;
+			return true;
+		}
+		//check if car have a lot of side movement
+		if(Mathf.Abs(GetLateralVelocity()) > 4.0f)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	public float GetVelocityMagnitude()
+	{
+		return carRigidbody2.velocity.magnitude;
 	}
 
 	public void SetInputVector(Vector2 inputVector)
