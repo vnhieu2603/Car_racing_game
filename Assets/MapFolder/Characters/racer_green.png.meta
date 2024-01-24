@@ -130,7 +130,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      racer_green_0: -940229644057033274
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

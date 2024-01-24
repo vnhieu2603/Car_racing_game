@@ -130,7 +130,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      smoke-png-525_0: -8730055142338598584
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,16 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class CarSoundEffectHandler : MonoBehaviour
 {
-    public AudioSource tireScreechingAudioSource;
+	public AudioSource carStartAudioSource;
+	public AudioSource tireScreechingAudioSource;
 	public AudioSource engineAudioSource;
 	public AudioSource carHitAudioSource;
 
     float desiredEnginePitch = 0.5f;
     float tireScreechingPitch = 0.5f;
 
+    private bool hasPlayed = false;
 	TopDownCarController topDownCarController;
 
     void Awake()
@@ -20,15 +23,27 @@ public class CarSoundEffectHandler : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-        
-    }
+		if (!hasPlayed)
+		{
+            Debug.Log("da chay vao true");
+            carStartAudioSource.volume = 10.0f;
+
+			hasPlayed = true;
+		} else
+        {
+			Debug.Log("da chay vao false");
+
+			carStartAudioSource.volume = 0f;
+        }
+	}
 
     // Update is called once per frame
     void Update()
     {
-        UpdateEngineSFX();
-		UpdateTireScreechingSFX();
 
+		UpdateEngineSFX();
+		UpdateTireScreechingSFX();
+        
 	}
 
     void UpdateEngineSFX()
@@ -43,11 +58,6 @@ public class CarSoundEffectHandler : MonoBehaviour
 
         engineAudioSource.volume = Mathf.Lerp(engineAudioSource.volume, desiredEngineVolume, Time.deltaTime * 10);
 
-        //Change the pitch to add more variation to engine sound
-        desiredEnginePitch = velocityMagnitude * 0.2f;
-		desiredEnginePitch = Mathf.Clamp(desiredEnginePitch, 0.5f, 2.0f);
-        engineAudioSource.pitch = Mathf.Lerp(engineAudioSource.pitch, desiredEnginePitch, Time.deltaTime * 1.5f);
-
 	}
 
     void UpdateTireScreechingSFX()
@@ -59,19 +69,25 @@ public class CarSoundEffectHandler : MonoBehaviour
             if(isBraking)
             {
                 tireScreechingAudioSource.volume = Mathf.Lerp(tireScreechingAudioSource.volume, 1.0f, Time.deltaTime * 10);
-                tireScreechingPitch = Mathf.Lerp(tireScreechingPitch, 0.5f, Time.deltaTime * 10);
 			} else
             {
-                //if car is not braking, still play screech sound if car is drifting
-                tireScreechingAudioSource.volume = Mathf.Abs(lateralVelocity) * 0.05f;
-				tireScreechingPitch = Mathf.Abs(lateralVelocity) * 0.1f;
-
+                tireScreechingAudioSource.volume = Mathf.Abs(lateralVelocity) * 0.05f;	
 			}
 		}else //fade out the tire screech SFX
         {
 			tireScreechingAudioSource.volume = Mathf.Lerp(tireScreechingAudioSource.volume, 0, Time.deltaTime * 10);
-
 		}
-
 	}
+
+    void UpdateCollisionHitSFX(Collision2D collision2D)
+    {
+        float relativeVelocity = collision2D.relativeVelocity.magnitude;
+        float volume = relativeVelocity * 0.1f;
+
+        carHitAudioSource.volume = volume;
+        if (!carHitAudioSource.isPlaying)
+        {
+            carHitAudioSource.Play();
+        }
+    }
 }

@@ -130,7 +130,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      tires_white_0: -4919978993032801781
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

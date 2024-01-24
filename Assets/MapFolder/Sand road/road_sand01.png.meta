@@ -130,7 +130,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      road_sand01_0: 2207937840205303178
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

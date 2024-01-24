@@ -130,7 +130,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      tribune_overhang_striped_0: 5699957917459056116
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

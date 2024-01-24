@@ -130,7 +130,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      barrier_white_race_0: 2116189022059509611
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

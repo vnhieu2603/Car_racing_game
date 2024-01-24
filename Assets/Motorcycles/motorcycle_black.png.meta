@@ -130,7 +130,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      motorcycle_black_0: 7980170343531276299
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
