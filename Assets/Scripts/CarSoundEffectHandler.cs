@@ -23,18 +23,7 @@ public class CarSoundEffectHandler : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-		if (!hasPlayed)
-		{
-            Debug.Log("da chay vao true");
-            carStartAudioSource.volume = 10.0f;
-
-			hasPlayed = true;
-		} else
-        {
-			Debug.Log("da chay vao false");
-
-			carStartAudioSource.volume = 0f;
-        }
+		StartCoroutine(PlayAudioAndDisable());
 	}
 
     // Update is called once per frame
@@ -78,8 +67,13 @@ public class CarSoundEffectHandler : MonoBehaviour
 			tireScreechingAudioSource.volume = Mathf.Lerp(tireScreechingAudioSource.volume, 0, Time.deltaTime * 10);
 		}
 	}
-
-    void UpdateCollisionHitSFX(Collision2D collision2D)
+	void OnCollisionEnter2D(Collision2D collision)
+	{
+			Debug.Log("helloooooooooooooooooooooooooooooo");
+			UpdateCollisionHitSFX(collision);
+		
+	}
+	void UpdateCollisionHitSFX(Collision2D collision2D)
     {
         float relativeVelocity = collision2D.relativeVelocity.magnitude;
         float volume = relativeVelocity * 0.1f;
@@ -87,7 +81,26 @@ public class CarSoundEffectHandler : MonoBehaviour
         carHitAudioSource.volume = volume;
         if (!carHitAudioSource.isPlaying)
         {
+			Debug.Log("Hit voi volume: "+ carHitAudioSource.volume);
             carHitAudioSource.Play();
+
         }
     }
+
+	IEnumerator PlayAudioAndDisable()
+	{
+		//yield return new WaitForSeconds(1.0f);
+
+		carStartAudioSource.volume = 10f;
+
+        Debug.Log("Da chay vao day voi volume: "+ carStartAudioSource.volume + ",clip length: "+ carStartAudioSource.clip.length);
+
+		carStartAudioSource.Play();
+
+		yield return new WaitForSeconds(carStartAudioSource.clip.length-0.59f);
+	
+		carStartAudioSource.Stop();
+		carStartAudioSource.gameObject.SetActive(false);
+
+	}
 }

@@ -5,10 +5,19 @@ using UnityEngine;
 
 public class TopDownCarController : MonoBehaviour
 {
+	//CAR SETTING
 	public float driftFactor = 0.95f;
 	public float accelerationFactor = 30.0f;
 	public float turnFactor = 3.5f;
 	public float maxSpeed = 20;
+
+	//SPRITES
+	public SpriteRenderer carSpriteRenderer;
+	public SpriteRenderer carShadowRenderer;
+
+	//ANIMATION CURVE
+	public AnimationCurve jumpCurve;
+
 	//Local variables
 	float accelerationInput = 0;
 	float steeringInput = 0;
@@ -16,6 +25,9 @@ public class TopDownCarController : MonoBehaviour
 	float rotationAngle = 0;
 
 	float velocityVsUp = 0;
+
+	bool isJumping = false;
+
 	//Components
 	Rigidbody2D carRigidbody2;
 
@@ -50,20 +62,20 @@ public class TopDownCarController : MonoBehaviour
 	{
 		//Calculate how much "forward" we are going in terms of the direction of our velocity
 		velocityVsUp = Vector2.Dot(transform.up, carRigidbody2.velocity);
-		if(accelerationInput != 0)
-		{
-			Debug.Log("transform.up: " + transform.up);
-			Debug.Log("transform.right: " + transform.right);
+		//if(accelerationInput != 0)
+		//{
+		//	Debug.Log("transform.up: " + transform.up);
+		//	Debug.Log("transform.right: " + transform.right);
 
-			Debug.Log("carRigidbody2.velocity: " + carRigidbody2.velocity);
+		//	Debug.Log("carRigidbody2.velocity: " + carRigidbody2.velocity);
 
-			Debug.Log("Acce: "+ accelerationInput);
-		}
-		if (steeringInput != 0)
-		{
-			Debug.Log("Steering: " + steeringInput);
+		//	Debug.Log("Acce: "+ accelerationInput);
+		//}
+		//if (steeringInput != 0)
+		//{
+		//	Debug.Log("Steering: " + steeringInput);
 
-		}
+		//}
 		//Limit so we cannot go faster than max speed in the "forward" direction
 		if (velocityVsUp > maxSpeed && accelerationInput > 0)
 		{
@@ -151,5 +163,50 @@ public class TopDownCarController : MonoBehaviour
 	{
 		steeringInput  = inputVector.x;
 		accelerationInput = inputVector.y;
+	}
+
+	public void Jump(float jumpHighScale, float jumpPushScale)
+	{
+		if(!isJumping)
+		{
+			StartCoroutine(JumpCo(jumpHighScale, jumpPushScale));
+		}
+	}
+
+
+	private IEnumerator JumpCo(float jumpHighScale, float jumpPushScale)
+	{
+		isJumping = true;
+
+		float jumpStartTime = Time.time;
+		float jumpDuration = 2;
+
+		while(isJumping)
+		{
+			//Percentage 0 - 1 of where we are in the jumping process
+			float jumpCompletePercentage = (Time.time - jumpStartTime) / jumpDuration;
+			jumpCompletePercentage = Mathf.Clamp01(jumpCompletePercentage);
+
+			//take the base scale of 1 and add how much we should increase the scale
+			carSpriteRenderer.transform.localScale = Vector3.one + Vector3.one * jumpCurve.Evaluate(jumpCompletePercentage)* jumpHighScale;
+
+			carShadowRenderer.transform.localScale = carSpriteRenderer.transform.localScale * 0.75f;
+
+			Debug.Log("Car: "+ carSpriteRenderer.transform.localScale+ ", "+ carSpriteRenderer.transform.localPosition);
+			Debug.Log("Shadow: " + carShadowRenderer.transform.localScale + ", " + carShadowRenderer.transform.localPosition);
+			Debug.Log("Jump curve: " + jumpCurve.Evaluate(jumpCompletePercentage));
+
+			carShadowRenderer.transform.localPosition = new Vector3(1,-1,0.0f) * 3 * jumpCurve.Evaluate(jumpCompletePercentage) * jumpHighScale;
+			if (jumpCompletePercentage == 1.0f) break;
+
+			yield return null;
+		}
+
+		//handle landing, scale back the object
+		carSpriteRenderer.transform.localScale = Vector3.one;
+
+		carShadowRenderer.transform.localPosition = Vector3.one;
+		carShadowRenderer.transform.localScale = carSpriteRenderer.transform.localScale;
+		isJumping = false;
 	}
 }
