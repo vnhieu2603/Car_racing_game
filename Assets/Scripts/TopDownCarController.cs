@@ -29,12 +29,14 @@ public class TopDownCarController : MonoBehaviour
 	bool isJumping = false;
 
 	//Components
-	Rigidbody2D carRigidbody2;
+	Rigidbody2D carRigidbody2D;
+	Collider2D carCollider;
 
 	//Awake is called when the script instance is being loaded
 	void Awake()
 	{
-		carRigidbody2 = GetComponent<Rigidbody2D>();
+		carRigidbody2D = GetComponent<Rigidbody2D>();
+		carCollider = GetComponentInChildren<Collider2D>();
 	}
 
 	// Start is called before the first frame update
@@ -61,22 +63,8 @@ public class TopDownCarController : MonoBehaviour
 	void ApplyEngineForce()
 	{
 		//Calculate how much "forward" we are going in terms of the direction of our velocity
-		velocityVsUp = Vector2.Dot(transform.up, carRigidbody2.velocity);
-		//if(accelerationInput != 0)
-		//{
-		//	Debug.Log("transform.up: " + transform.up);
-		//	Debug.Log("transform.right: " + transform.right);
-
-		//	Debug.Log("carRigidbody2.velocity: " + carRigidbody2.velocity);
-
-		//	Debug.Log("Acce: "+ accelerationInput);
-		//}
-		//if (steeringInput != 0)
-		//{
-		//	Debug.Log("Steering: " + steeringInput);
-
-		//}
-		//Limit so we cannot go faster than max speed in the "forward" direction
+		velocityVsUp = Vector2.Dot(transform.up, carRigidbody2D.velocity);
+	
 		if (velocityVsUp > maxSpeed && accelerationInput > 0)
 		{
 			return;
@@ -87,7 +75,7 @@ public class TopDownCarController : MonoBehaviour
 			return;
 		}
 		//Limit so we cannot go faster in any direction while accelerating
-		if(carRigidbody2.velocity.sqrMagnitude > maxSpeed * maxSpeed && accelerationInput > 0)
+		if(carRigidbody2D.velocity.sqrMagnitude > maxSpeed * maxSpeed && accelerationInput > 0 && !isJumping)
 		{
 			return;
 		}
@@ -95,49 +83,53 @@ public class TopDownCarController : MonoBehaviour
 		//Apply drag if there is no accelerationInput so the car stops when the player lets go off the accelerator
 		if (accelerationInput == 0)
 		{
-			carRigidbody2.drag = Mathf.Lerp(carRigidbody2.drag, 3.0f, Time.fixedDeltaTime * 3);
+			carRigidbody2D.drag = Mathf.Lerp(carRigidbody2D.drag, 3.0f, Time.fixedDeltaTime * 3);
 		} else
 		{
-			carRigidbody2.drag = 0;
+			carRigidbody2D.drag = 0;
 		}
 		//Create a force for the engine
 		Vector2 engineForceVector = transform.up * accelerationInput * accelerationFactor;
 
 		//Apply force and pushes the car forward
-		carRigidbody2.AddForce(engineForceVector, ForceMode2D.Force);
+		carRigidbody2D.AddForce(engineForceVector, ForceMode2D.Force);
 	}
 
 	void ApplySteering()
 	{
 		//Limit the car ability to turn when moving slowly
-		float minSpeedBeforeAllowTurningFactor = (carRigidbody2.velocity.magnitude / 8);
+		float minSpeedBeforeAllowTurningFactor = (carRigidbody2D.velocity.magnitude / 8);
 		minSpeedBeforeAllowTurningFactor = Mathf.Clamp01(minSpeedBeforeAllowTurningFactor);
 		//Update rotation angle based on input 
 		rotationAngle -= steeringInput * turnFactor * minSpeedBeforeAllowTurningFactor;
 
 		//Apply steering by rotating the car object
-		carRigidbody2.MoveRotation(rotationAngle);
+		carRigidbody2D.MoveRotation(rotationAngle);
 	}
 
 	void killOrthogonalVelocity()
 	{
-		Vector2 forwardVelocity = transform.up * Vector2.Dot(carRigidbody2.velocity, transform.up);
-		Vector2 rightVelocity = transform.right * Vector2.Dot(carRigidbody2.velocity, transform.right);
+		Vector2 forwardVelocity = transform.up * Vector2.Dot(carRigidbody2D.velocity, transform.up);
+		Vector2 rightVelocity = transform.right * Vector2.Dot(carRigidbody2D.velocity, transform.right);
 
-		carRigidbody2.velocity = forwardVelocity + rightVelocity * driftFactor;
+		carRigidbody2D.velocity = forwardVelocity + rightVelocity * driftFactor;
 
 	}
 
 	float GetLateralVelocity()
 	{
 		//return how fast the car is going sideways
-		return Vector2.Dot(transform.right, carRigidbody2.velocity);
+		return Vector2.Dot(transform.right, carRigidbody2D.velocity);
 	}
 
 	public bool IsTireScreeching(out float lateralVelocity, out bool isBraking)
 	{
 		lateralVelocity = GetLateralVelocity();
 		isBraking = false;
+		if(isJumping)
+		{
+			return false;
+		}
 
 		//check if car is moving forward and if the player is hitting the brake. 
 		if(accelerationInput < 0 && velocityVsUp > 0)
@@ -156,7 +148,7 @@ public class TopDownCarController : MonoBehaviour
 
 	public float GetVelocityMagnitude()
 	{
-		return carRigidbody2.velocity.magnitude;
+		return carRigidbody2D.velocity.magnitude;
 	}
 
 	public void SetInputVector(Vector2 inputVector)
@@ -165,48 +157,88 @@ public class TopDownCarController : MonoBehaviour
 		accelerationInput = inputVector.y;
 	}
 
-	public void Jump(float jumpHighScale, float jumpPushScale)
+	public void Jump(float jumpHeightScale, float jumpPushScale)
 	{
 		if(!isJumping)
 		{
-			StartCoroutine(JumpCo(jumpHighScale, jumpPushScale));
+			StartCoroutine(JumpCo(jumpHeightScale, jumpPushScale));
 		}
 	}
 
 
-	private IEnumerator JumpCo(float jumpHighScale, float jumpPushScale)
+	private IEnumerator JumpCo(float jumpHeightScale, float jumpPushScale)
 	{
 		isJumping = true;
 
 		float jumpStartTime = Time.time;
-		float jumpDuration = 2;
+		float jumpDuration = carRigidbody2D.velocity.magnitude * 0.015f;
+
+		jumpHeightScale = jumpHeightScale * carRigidbody2D.velocity.magnitude * 0.05f;
+		jumpHeightScale = Mathf.Clamp(jumpHeightScale, 0.0f, 1.0f);
+		//Dissable collision
+		carCollider.enabled = false;
+
+		//Push the object forward when passed a jump
+		carRigidbody2D.AddForce(carRigidbody2D.velocity.normalized * jumpPushScale * 10, ForceMode2D.Impulse);
 
 		while(isJumping)
 		{
+
 			//Percentage 0 - 1 of where we are in the jumping process
 			float jumpCompletePercentage = (Time.time - jumpStartTime) / jumpDuration;
 			jumpCompletePercentage = Mathf.Clamp01(jumpCompletePercentage);
 
 			//take the base scale of 1 and add how much we should increase the scale
-			carSpriteRenderer.transform.localScale = Vector3.one + Vector3.one * jumpCurve.Evaluate(jumpCompletePercentage)* jumpHighScale;
+			carSpriteRenderer.transform.localScale = Vector3.one + Vector3.one * jumpCurve.Evaluate(jumpCompletePercentage)* jumpHeightScale;
 
 			carShadowRenderer.transform.localScale = carSpriteRenderer.transform.localScale * 0.75f;
-
+			carShadowRenderer.sortingOrder = carSpriteRenderer.sortingOrder-1;
 			Debug.Log("Car: "+ carSpriteRenderer.transform.localScale+ ", "+ carSpriteRenderer.transform.localPosition);
-			Debug.Log("Shadow: " + carShadowRenderer.transform.localScale + ", " + carShadowRenderer.transform.localPosition);
+			//Debug.Log("Shadow: " + carShadowRenderer.transform.localScale + ", " + carShadowRenderer.transform.localPosition);
 			Debug.Log("Jump curve: " + jumpCurve.Evaluate(jumpCompletePercentage));
 
-			carShadowRenderer.transform.localPosition = new Vector3(1,-1,0.0f) * 3 * jumpCurve.Evaluate(jumpCompletePercentage) * jumpHighScale;
+			carShadowRenderer.transform.localPosition = new Vector3(1,-1,0.0f) * 9 * jumpCurve.Evaluate(jumpCompletePercentage) * jumpHeightScale;
 			if (jumpCompletePercentage == 1.0f) break;
 
 			yield return null;
 		}
 
-		//handle landing, scale back the object
-		carSpriteRenderer.transform.localScale = Vector3.one;
+		if (Physics2D.OverlapCircle(transform.position, 1.5f))
+		{
+			//jump again if there are something below the car
+			isJumping = false;
 
-		carShadowRenderer.transform.localPosition = Vector3.one;
-		carShadowRenderer.transform.localScale = carSpriteRenderer.transform.localScale;
-		isJumping = false;
+			//add a small jump and push the car forward a bit
+			Jump(0.2f, 0.6f);
+		}
+		else
+		{
+			//handle landing, scale back the object
+			carSpriteRenderer.transform.localScale = Vector3.one;
+
+			carShadowRenderer.transform.localPosition = Vector3.zero;
+			carShadowRenderer.transform.localScale = carSpriteRenderer.transform.localScale;
+
+			//Enable collision
+			carCollider.enabled = true;
+			carShadowRenderer.sortingOrder = -2;
+
+			isJumping = false;
+		}
+
+
+
+	}
+
+	//Detect jump trigger
+	void OnTriggerEnter2D(Collider2D collider2D)
+	{
+		if(collider2D.CompareTag("Jump"))
+		{
+			Debug.Log("JUMPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPp");
+			//Get the jump data from the jump
+			JumpData jumpData = collider2D.GetComponent<JumpData>();
+			Jump(jumpData.jumpHeightScale, jumpData.jumpPushScale);
+		}
 	}
 }

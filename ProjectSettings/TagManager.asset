@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Jump
+  - OverpassTrigger
+  - UnderpassTrigger
+  - OverpassCollider
+  - UnderpassCollider
   layers:
   - Default
   - TransparentFX
@@ -38,9 +43,18 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Default
-    uniqueID: 0
+  - name: Rawmap
+    uniqueID: 2931194185
+    locked: 0
+  - name: Racetrack
+    uniqueID: 425363643
     locked: 0
   - name: SkidMark
     uniqueID: 4128621785
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: RacetrackOverpass
+    uniqueID: 4241156617
     locked: 0
