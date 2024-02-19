@@ -33,6 +33,8 @@ public class CarLayerHandler : MonoBehaviour
 		}
 
         carCollider = GetComponentInChildren<Collider2D>();
+
+        carCollider.gameObject.layer = LayerMask.NameToLayer("ObjectOnUnderpass");
 	}
 
 	// Start is called before the first frame update
@@ -89,10 +91,17 @@ public class CarLayerHandler : MonoBehaviour
 	{
 		if(collider2D.CompareTag("UnderpassTrigger")) {
             isDrivingOnOverpass = false;
-            UpdateSortingAndCollisionLayers();
+
+			carCollider.gameObject.layer = LayerMask.NameToLayer("ObjectOnUnderpass");
+
+			UpdateSortingAndCollisionLayers();
         } else if(collider2D.CompareTag("OverpassTrigger"))
         {
             isDrivingOnOverpass = true;
+
+			carCollider.gameObject.layer = LayerMask.NameToLayer("ObjectOnOverpass");
+
+
 			UpdateSortingAndCollisionLayers();
 
 		}

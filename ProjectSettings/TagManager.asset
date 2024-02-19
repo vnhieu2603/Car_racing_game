@@ -9,6 +9,7 @@ TagManager:
   - UnderpassTrigger
   - OverpassCollider
   - UnderpassCollider
+  - Checkpoint
   layers:
   - Default
   - TransparentFX
@@ -16,8 +17,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - ObjectOnOverpass
+  - ObjectOnUnderpass
   - 
   - 
   - 

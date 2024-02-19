@@ -192,6 +192,7 @@ public class TopDownCarController : MonoBehaviour
 			carSpriteRenderer.transform.localScale = Vector3.one + Vector3.one * jumpCurve.Evaluate(jumpCompletePercentage)* jumpHeightScale;
 
 			carShadowRenderer.transform.localScale = carSpriteRenderer.transform.localScale * 0.75f;
+			carShadowRenderer.sortingLayerName = "RacetrackOverpass";
 			carShadowRenderer.sortingOrder = carSpriteRenderer.sortingOrder-1;
 			Debug.Log("Car: "+ carSpriteRenderer.transform.localScale+ ", "+ carSpriteRenderer.transform.localPosition);
 			//Debug.Log("Shadow: " + carShadowRenderer.transform.localScale + ", " + carShadowRenderer.transform.localPosition);
@@ -221,6 +222,7 @@ public class TopDownCarController : MonoBehaviour
 
 			//Enable collision
 			carCollider.enabled = true;
+			carShadowRenderer.sortingLayerName = "Rawmap";
 			carShadowRenderer.sortingOrder = -2;
 
 			isJumping = false;
