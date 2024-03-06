@@ -10,6 +10,8 @@ TagManager:
   - OverpassCollider
   - UnderpassCollider
   - Checkpoint
+  - AI
+  - SpawnPoint
   layers:
   - Default
   - TransparentFX
@@ -19,7 +21,7 @@ TagManager:
   - UI
   - ObjectOnOverpass
   - ObjectOnUnderpass
-  - 
+  - ShadowLayer
   - 
   - 
   - 

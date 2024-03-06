@@ -86,7 +86,14 @@ public class CarLapCounter : MonoBehaviour
 				if(isRaceCompleted)
 				{
 					StartCoroutine(ShowPositionCO(100));
-				} else
+
+					if (CompareTag("Player"))
+					{
+						GameManager.instance.OnGameCompleted();
+						GetComponent<CarInputHandler>().enabled = false;
+						GetComponent<AICarHandler>().enabled = true;
+					}
+				} else if(checkpoint.isFinishLine) 
 				{
 					StartCoroutine(ShowPositionCO(1.5f));
 				}

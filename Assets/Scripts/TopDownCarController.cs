@@ -7,8 +7,8 @@ public class TopDownCarController : MonoBehaviour
 {
 	//CAR SETTING
 	public float driftFactor = 0.95f;
-	public float accelerationFactor = 30.0f;
-	public float turnFactor = 3.5f;
+	public float accelerationFactor = 40.0f;
+	public float turnFactor = 2.7f;
 	public float maxSpeed = 20;
 
 	//SPRITES
@@ -53,6 +53,10 @@ public class TopDownCarController : MonoBehaviour
 
 	void FixedUpdate()
 	{
+		if(GameManager.instance.GetGameState() == GameState.countDown)
+		{
+			return;
+		}
 		ApplyEngineForce();
 
 		killOrthogonalVelocity();
@@ -64,7 +68,12 @@ public class TopDownCarController : MonoBehaviour
 	{
 		//Calculate how much "forward" we are going in terms of the direction of our velocity
 		velocityVsUp = Vector2.Dot(transform.up, carRigidbody2D.velocity);
-	
+		if(steeringInput != 0)
+		{
+			Debug.Log("Transform.up: " + transform.up + ", carRigidbody2D.velocity: " + carRigidbody2D.velocity + ", velocityVsUp: " + velocityVsUp + ", transform.right: "+ transform.right);
+
+		}
+
 		if (velocityVsUp > maxSpeed && accelerationInput > 0)
 		{
 			return;
@@ -171,9 +180,9 @@ public class TopDownCarController : MonoBehaviour
 		isJumping = true;
 
 		float jumpStartTime = Time.time;
-		float jumpDuration = carRigidbody2D.velocity.magnitude * 0.015f;
+		float jumpDuration = carRigidbody2D.velocity.magnitude * 0.025f;
 
-		jumpHeightScale = jumpHeightScale * carRigidbody2D.velocity.magnitude * 0.05f;
+		jumpHeightScale = jumpHeightScale * carRigidbody2D.velocity.magnitude * 0.1f;
 		jumpHeightScale = Mathf.Clamp(jumpHeightScale, 0.0f, 1.0f);
 		//Dissable collision
 		carCollider.enabled = false;
@@ -183,7 +192,7 @@ public class TopDownCarController : MonoBehaviour
 
 		while(isJumping)
 		{
-
+			
 			//Percentage 0 - 1 of where we are in the jumping process
 			float jumpCompletePercentage = (Time.time - jumpStartTime) / jumpDuration;
 			jumpCompletePercentage = Mathf.Clamp01(jumpCompletePercentage);
@@ -192,25 +201,25 @@ public class TopDownCarController : MonoBehaviour
 			carSpriteRenderer.transform.localScale = Vector3.one + Vector3.one * jumpCurve.Evaluate(jumpCompletePercentage)* jumpHeightScale;
 
 			carShadowRenderer.transform.localScale = carSpriteRenderer.transform.localScale * 0.75f;
-			carShadowRenderer.sortingLayerName = "RacetrackOverpass";
+			
 			carShadowRenderer.sortingOrder = carSpriteRenderer.sortingOrder-1;
-			Debug.Log("Car: "+ carSpriteRenderer.transform.localScale+ ", "+ carSpriteRenderer.transform.localPosition);
+			//Debug.Log("Car: "+ carSpriteRenderer.transform.localScale+ ", "+ carSpriteRenderer.transform.localPosition);
 			//Debug.Log("Shadow: " + carShadowRenderer.transform.localScale + ", " + carShadowRenderer.transform.localPosition);
-			Debug.Log("Jump curve: " + jumpCurve.Evaluate(jumpCompletePercentage));
+			//Debug.Log("Jump curve: " + jumpCurve.Evaluate(jumpCompletePercentage));
 
-			carShadowRenderer.transform.localPosition = new Vector3(1,-1,0.0f) * 9 * jumpCurve.Evaluate(jumpCompletePercentage) * jumpHeightScale;
+			carShadowRenderer.transform.localPosition = new Vector3(1,-1,0.0f) * 6 * jumpCurve.Evaluate(jumpCompletePercentage) * jumpHeightScale;
 			if (jumpCompletePercentage == 1.0f) break;
 
 			yield return null;
 		}
 
-		if (Physics2D.OverlapCircle(transform.position, 1.5f))
+		if (Physics2D.OverlapCircle(transform.position, 1.5f) )
 		{
 			//jump again if there are something below the car
 			isJumping = false;
 
 			//add a small jump and push the car forward a bit
-			Jump(0.2f, 0.6f);
+			Jump(0.2f, 0.4f);
 		}
 		else
 		{
@@ -222,7 +231,7 @@ public class TopDownCarController : MonoBehaviour
 
 			//Enable collision
 			carCollider.enabled = true;
-			carShadowRenderer.sortingLayerName = "Rawmap";
+			
 			carShadowRenderer.sortingOrder = -2;
 
 			isJumping = false;

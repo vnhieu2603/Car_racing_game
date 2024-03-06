@@ -11,26 +11,26 @@ public class LeaderboardUIHandler : MonoBehaviour
 
 	void Awake()
 	{
-		VerticalLayoutGroup leaderboardLayoutGroup = GetComponentInChildren<VerticalLayoutGroup>();
-
-		CarLapCounter[] carLapCountersArray = FindObjectsOfType<CarLapCounter>();
-
-        setLeaderBoard = new SetLeaderBoard[carLapCountersArray.Length];
-
-        for(int i = 0; i < carLapCountersArray.Length; i++)
-        {
-            GameObject leaderboardGameObject = Instantiate(leaderboardItemPrefab, leaderboardLayoutGroup.transform);
-
-            setLeaderBoard[i] = leaderboardGameObject.GetComponent<SetLeaderBoard>();
-
-            setLeaderBoard[i].SetPositionText($"{i + 1}.");
-		}
+		
 	}
 	// Start is called before the first frame update
 	void Start()
     {
-        
-    }
+		VerticalLayoutGroup leaderboardLayoutGroup = GetComponentInChildren<VerticalLayoutGroup>();
+
+		CarLapCounter[] carLapCountersArray = FindObjectsOfType<CarLapCounter>();
+
+		setLeaderBoard = new SetLeaderBoard[carLapCountersArray.Length];
+
+		for (int i = 0; i < carLapCountersArray.Length; i++)
+		{
+			GameObject leaderboardGameObject = Instantiate(leaderboardItemPrefab, leaderboardLayoutGroup.transform);
+
+			setLeaderBoard[i] = leaderboardGameObject.GetComponent<SetLeaderBoard>();
+
+			setLeaderBoard[i].SetPositionText($"{i + 1}.");
+		}
+	}
     
     public void UpdateList(List<CarLapCounter> lapCounters)
     {

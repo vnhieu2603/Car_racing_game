@@ -357,7 +357,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4584414527204807435
 Transform:
   m_ObjectHideFlags: 0
@@ -10530,8 +10530,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   driftFactor: 0.95
-  accelerationFactor: 50
-  turnFactor: 3.5
+  accelerationFactor: 40
+  turnFactor: 2.7
   maxSpeed: 30
   carSpriteRenderer: {fileID: 3557616128527568699}
   carShadowRenderer: {fileID: 6126256479264482074}
@@ -10598,6 +10598,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dba102978e6ba94da3d161d824f9a06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerNumber: 1
 --- !u!114 &6618014520892311436
 MonoBehaviour:
   m_ObjectHideFlags: 0
