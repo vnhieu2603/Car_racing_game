@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class AICarHandler : MonoBehaviour
@@ -8,14 +9,25 @@ public class AICarHandler : MonoBehaviour
     public enum AIMode { followPlayer, followWayPoints};
 
     public AIMode aiMode;
+    public float maxSpeed = 16;
+
     Vector3 targetPosition = Vector3.zero;
     Transform targetTransform = null;
+
+    //waypoint
+    WaypointNode currentWayPoint = null;
+    WaypointNode[] allWayPoints;
+
+    PolygonCollider2D polygonCollider2D;
 
     TopDownCarController topDownCarController;
 
 	void Awake()
 	{
-        topDownCarController = GetComponent<TopDownCarController>();	
+        topDownCarController = GetComponent<TopDownCarController>();
+        allWayPoints = FindObjectsOfType<WaypointNode>();
+
+        polygonCollider2D = GetComponentInChildren<PolygonCollider2D>();
 	}
 	// Start is called before the first frame update
 	void Start()
@@ -32,15 +44,50 @@ public class AICarHandler : MonoBehaviour
             case AIMode.followPlayer:
                 FollowPlayer();
                 break;
+            case AIMode.followWayPoints:
+                FollowWaypoints();
+                break;
         }
 
         inputVector.x = TurnTowardTarget();
-        inputVector.y = 1.0f;
+        inputVector.y = ApplyBrake(inputVector.x);
 
         topDownCarController.SetInputVector(inputVector);
 
 	}
-    void FollowPlayer()
+
+    void FollowWaypoints()
+    {
+        if(currentWayPoint == null)
+        {
+            currentWayPoint = FindClosestWaypoint();
+        } else
+        {
+            targetPosition = currentWayPoint.transform.position;
+
+            float distanceToWayPoint = (targetPosition - transform.position).magnitude;
+            //check if we are close enough to reach the waypoint
+            if(distanceToWayPoint <= currentWayPoint.minDistanceToNextWaypoint)
+            {
+                if(currentWayPoint.maxSpeed > 0)
+                {
+                    maxSpeed = currentWayPoint.maxSpeed;
+                } else
+                {
+                    maxSpeed = 1000;
+                }
+                //if we are close enough then go to the next way point
+                currentWayPoint = currentWayPoint.nextWayPointNode[0];
+            }
+        }
+    }
+
+    WaypointNode FindClosestWaypoint()
+    {
+        return allWayPoints.OrderBy(t => Vector3.Distance(transform.position, t.transform.position)).FirstOrDefault();
+    }
+
+	void FollowPlayer()
     {
         if(targetTransform == null)
         {
@@ -72,4 +119,17 @@ public class AICarHandler : MonoBehaviour
 
         return steerAmount;
     }
+
+    float ApplyBrake(float inputX)
+    {
+        if(topDownCarController.GetVelocityMagnitude() > maxSpeed)
+        {
+            return 0;
+        }
+        
+        return 1.05f - Mathf.Abs(inputX);
+    }
+
+
+    
 }
