@@ -2,9 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
+
 public class SelectCarUiHandler : MonoBehaviour
 {
-    [Header("Car prefab")]
+    public TMP_Text mapText;
+
+	[Header("Car prefab")]
     public GameObject carPrefab;
 
     [Header("Spawn on")]
@@ -15,13 +19,21 @@ public class SelectCarUiHandler : MonoBehaviour
     CarData[] carDatas;
 
     int selectedCarIndex = 0;
-    CarUIHandler carUIHandler = null;
+    int selectedMapIndex = 1;
+    int totalMap = 0;
+    string selectedMap;
+
+	CarUIHandler carUIHandler = null;
 
     // Start is called before the first frame update
     void Start()
     {
-        carDatas = Resources.LoadAll<CarData>("CarData/");
-        StartCoroutine(SpawnCarCO(true));
+        totalMap = SceneManager.sceneCountInBuildSettings;
+
+		carDatas = Resources.LoadAll<CarData>("CarData/");
+        Debug.Log("Total scene: " + totalMap);
+		
+		StartCoroutine(SpawnCarCO(true));
     }
 
     // Update is called once per frame
@@ -67,7 +79,39 @@ public class SelectCarUiHandler : MonoBehaviour
 		StartCoroutine(SpawnCarCO(false));
 	}
 
-    public void OnSelectCar()
+    public void OnPreviousMap()
+    {
+		selectedMapIndex--;
+        if(selectedMapIndex < 1)
+        {
+            selectedMapIndex = totalMap - 1;
+		}
+		string path = SceneUtility.GetScenePathByBuildIndex(selectedMapIndex);
+		int slash = path.LastIndexOf('/');
+		string name = path.Substring(slash + 1);
+		int dot = name.LastIndexOf('.');
+		Debug.Log("Scene name: " + name.Substring(0, dot));
+		mapText.text = name.Substring(0, dot);
+        selectedMap = name.Substring(0, dot);
+
+	}
+	public void OnNextMap()
+	{
+		selectedMapIndex++;
+		if (selectedMapIndex > totalMap - 1)
+		{
+			selectedMapIndex = 1;
+		}
+		string path = SceneUtility.GetScenePathByBuildIndex(selectedMapIndex);
+		int slash = path.LastIndexOf('/');
+		string name = path.Substring(slash + 1);
+		int dot = name.LastIndexOf('.');
+		Debug.Log("Scene name: " + name.Substring(0, dot));
+		mapText.text = name.Substring(0, dot);
+		selectedMap = name.Substring(0, dot);
+
+	}
+	public void OnSelectCar()
     {
         PlayerPrefs.SetInt("P1SelectedCarID", carDatas[selectedCarIndex].CarUniqueID);
 		PlayerPrefs.SetInt("P2SelectedCarID", carDatas[selectedCarIndex].CarUniqueID);
@@ -76,7 +120,7 @@ public class SelectCarUiHandler : MonoBehaviour
 
         PlayerPrefs.Save();
 
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene(selectedMap);
 	}
 	IEnumerator SpawnCarCO(bool isCarAppearingOnRightSide)
     {
