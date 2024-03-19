@@ -9,7 +9,7 @@ public class AICarHandler : MonoBehaviour
     public enum AIMode { followPlayer, followWayPoints};
 
     public AIMode aiMode;
-    public float maxSpeed = 16;
+    public float maxSpeed = 20;
 
     Vector3 targetPosition = Vector3.zero;
     Transform targetTransform = null;

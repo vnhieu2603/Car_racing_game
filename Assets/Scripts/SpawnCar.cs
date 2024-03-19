@@ -1,12 +1,16 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnCar : MonoBehaviour
 {
+    public CinemachineVirtualCamera virtualCamera;
+
     // Start is called before the first frame update
     void Start()
     {
+        virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
         GameObject[] spawnPoints = GameObject.FindGameObjectsWithTag("SpawnPoint");
         Debug.Log(spawnPoints.Length);
         CarData[] carDatas = Resources.LoadAll<CarData>("CarData/");
@@ -27,6 +31,7 @@ public class SpawnCar : MonoBehaviour
                     GameObject playerCar = Instantiate(carData.CarPrefab, spawnPoint.position, spawnPoint.rotation);
 
                     playerCar.GetComponent<CarInputHandler>().playerNumber = i + 1;
+                    virtualCamera.Follow = playerCar.transform;
                     break;
                 }
             }
