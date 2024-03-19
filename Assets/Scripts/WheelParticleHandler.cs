@@ -19,6 +19,8 @@ public class WheelParticleHandler : MonoBehaviour
 
         particleSystemEmissionModule = particleSystemSmoke.emission;
 
+        particleSystenMainModule = particleSystemSmoke.main;
+
         particleSystemEmissionModule.rateOverTime = 0;
 	 }
 
@@ -34,24 +36,24 @@ public class WheelParticleHandler : MonoBehaviour
         //Reduce the particles over time
         particleEmissionRate = Mathf.Lerp(particleEmissionRate, 0, Time.deltaTime * 5);
 		particleSystemEmissionModule.rateOverTime = particleEmissionRate;
-        //switch (topDownCarController.GetSurface())
-        //{
-        //    case Surface.SurfaceType.Road:
-        //        particleSystenMainModule.startColor = new Color(0.83f, 0.83f, 0.83f);
-        //        break;
-        //    case Surface.SurfaceType.Sand:
-        //        particleEmissionRate = topDownCarController.GetVelocityMagnitude();
-        //        particleSystenMainModule.startColor = new Color(0.64f, 0.42f, 0.24f);
-        //        break;
-        //    case Surface.SurfaceType.Grass:
-        //        particleEmissionRate = topDownCarController.GetVelocityMagnitude();
-        //        particleSystenMainModule.startColor = new Color(0.15f, 0.4f, 0.3f);
-        //        break;
-        //    case Surface.SurfaceType.Oil:
-        //        particleEmissionRate = topDownCarController.GetVelocityMagnitude();
-        //        particleSystenMainModule.startColor = new Color(0.2f, 0.2f, 0.2f);
-        //        break;
-        //}
+        switch (topDownCarController.GetSurface())
+        {
+            case Surface.SurfaceType.Road:
+                particleSystenMainModule.startColor = new Color(0.83f, 0.83f, 0.83f);
+                break;
+            case Surface.SurfaceType.Sand:
+                particleEmissionRate = topDownCarController.GetVelocityMagnitude();
+                particleSystenMainModule.startColor = new Color(0.64f, 0.42f, 0.24f);
+                break;
+            case Surface.SurfaceType.Grass:
+                particleEmissionRate = topDownCarController.GetVelocityMagnitude();
+                particleSystenMainModule.startColor = new Color(0.15f, 0.4f, 0.3f);
+                break;
+            case Surface.SurfaceType.Oil:
+                particleEmissionRate = topDownCarController.GetVelocityMagnitude();
+                particleSystenMainModule.startColor = new Color(0.2f, 0.2f, 0.2f);
+                break;
+        }
         if (topDownCarController.IsTireScreeching(out float lateralVelocity, out bool isBraking))
         {
 			//if the car tires is screeching then emit smoke. More smoke when player hit brake

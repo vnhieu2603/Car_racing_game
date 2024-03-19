@@ -32,15 +32,15 @@ public class TopDownCarController : MonoBehaviour
 	//Components
 	Rigidbody2D carRigidbody2D;
 	Collider2D carCollider;
-    //CarSurfaceHandle carSurfaceHandle;
-    //Awake is called when the script instance is being loaded
-    void Awake()
+	CarSurfaceHandle carSurfaceHandle;
+	//Awake is called when the script instance is being loaded
+	void Awake()
 	{
 		carRigidbody2D = GetComponent<Rigidbody2D>();
 		carCollider = GetComponentInChildren<Collider2D>();
-        //carSurfaceHandle = GetComponent<CarSurfaceHandle>();
+		carSurfaceHandle = GetComponent<CarSurfaceHandle>();
 
-    }
+	}
 
     // Start is called before the first frame update
     void Start()
@@ -104,23 +104,23 @@ public class TopDownCarController : MonoBehaviour
         }
         else
         {
-			carRigidbody2D.drag = 0;
+			carRigidbody2D.drag = carRigidbody2D.drag = Mathf.Lerp(carRigidbody2D.drag, 0f, Time.fixedDeltaTime * 10);
         }
-        //switch (GetSurface())
-        //{
-        //    case Surface.SurfaceType.Sand:
-        //        carRigidbody2D.drag = Mathf.Lerp(carRigidbody2D.drag, 15f, Time.fixedDeltaTime * 3);
-        //        break;
-        //    case Surface.SurfaceType.Grass:
-        //        carRigidbody2D.drag = Mathf.Lerp(carRigidbody2D.drag, 10f, Time.fixedDeltaTime * 3);
-        //        break;
-        //    case Surface.SurfaceType.Oil:
-        //        carRigidbody2D.drag = 0;
-        //        accelerationInput = Mathf.Clamp(accelerationInput, 0, 1f);
-        //        break;
-        //}
-        //Create a force for the engine
-        Vector2 engineForceVector = transform.up * accelerationInput * accelerationFactor;
+		switch (GetSurface())
+		{
+			case Surface.SurfaceType.Sand:
+				carRigidbody2D.drag = Mathf.Lerp(carRigidbody2D.drag, 15f, Time.fixedDeltaTime * 3);
+				break;
+			case Surface.SurfaceType.Grass:
+				carRigidbody2D.drag = Mathf.Lerp(carRigidbody2D.drag, 10f, Time.fixedDeltaTime * 3);
+				break;
+			case Surface.SurfaceType.Oil:
+				carRigidbody2D.drag = 0;
+				accelerationInput = Mathf.Clamp(accelerationInput, 0, 1f);
+				break;
+		}
+		//Create a force for the engine
+		Vector2 engineForceVector = transform.up * accelerationInput * accelerationFactor;
 
 		//Apply force and pushes the car forward
 		carRigidbody2D.AddForce(engineForceVector, ForceMode2D.Force);
@@ -143,7 +143,20 @@ public class TopDownCarController : MonoBehaviour
 		Vector2 forwardVelocity = transform.up * Vector2.Dot(carRigidbody2D.velocity, transform.up);
 		Vector2 rightVelocity = transform.right * Vector2.Dot(carRigidbody2D.velocity, transform.right);
 
-		carRigidbody2D.velocity = forwardVelocity + rightVelocity * driftFactor;
+        float currentDriftFactor = driftFactor;
+        switch (GetSurface())
+        {
+            case Surface.SurfaceType.Sand:
+                currentDriftFactor = 0.5f;
+                break;
+            case Surface.SurfaceType.Oil:
+                currentDriftFactor = 1.00f;
+                break;
+            case Surface.SurfaceType.Grass:
+                currentDriftFactor = 1.05f;
+                break;
+        }
+        carRigidbody2D.velocity = forwardVelocity + rightVelocity * currentDriftFactor;
 
 	}
 
@@ -275,8 +288,8 @@ public class TopDownCarController : MonoBehaviour
 		}
 	}
 
-    //public Surface.SurfaceType GetSurface()
-    //{
-    //    return carSurfaceHandle.GetCurrentSurface();
-    //}
+	public Surface.SurfaceType GetSurface()
+	{
+		return carSurfaceHandle.GetCurrentSurface();
+	}
 }
