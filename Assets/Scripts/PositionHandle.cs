@@ -11,15 +11,16 @@ public class PositionHandle : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-		
 
-        //leaderboardUIHandler = FindObjectOfType<LeaderboardUIHandler>();
-	}
 
-	void Start()
+    }
+
+    void Start()
 	{
-		//get all CarLapCounter in Scene
-		CarLapCounter[] carLapCountersArray = FindObjectsOfType<CarLapCounter>();
+        //leaderboardUIHandler = FindObjectOfType<LeaderboardUIHandler>();
+
+        //get all CarLapCounter in Scene
+        CarLapCounter[] carLapCountersArray = FindObjectsOfType<CarLapCounter>();
 		//Debug.Log("car lap array: " + carLapCountersArray[0] + ", " + carLapCountersArray[1] + ", " + carLapCountersArray[2] + ", " + carLapCountersArray[3]);
 		//store the lap counters in list
 		carLapCounterList = carLapCountersArray.ToList<CarLapCounter>();
@@ -41,8 +42,9 @@ public class PositionHandle : MonoBehaviour
 
         carLapCounter.SetCarPositon(carPosition);
 
-		//leaderboardUIHandler = FindObjectOfType<LeaderboardUIHandler>();
+        //leaderboardUIHandler.UpdateList(carLapCounterList);
 
-	}
+
+    }
 
 }

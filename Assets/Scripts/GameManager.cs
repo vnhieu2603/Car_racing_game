@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
 
 	GameState gameState = GameState.countDown;
 
+	float raceStartedTime = 0;
+	float raceCompletedTime = 0;
+
 	//Events
 	public event Action<GameManager> OnGameStateChanged;
 	private void Awake()
@@ -54,15 +57,27 @@ public class GameManager : MonoBehaviour
 			OnGameStateChanged?.Invoke(this);
 		}
 	}
+
+	public float GetRaceTime()
+	{
+		if(gameState == GameState.raceOver)
+		{
+			return raceCompletedTime - raceStartedTime;
+		} else return Time.time - raceStartedTime;
+	}
 	public void OnRaceStart()
 	{
 		Debug.Log("On race start");
+
+		raceStartedTime = Time.time;
 		ChangeGameSate(GameState.running);
 	}
 
 	public void OnGameCompleted()
 	{
 		Debug.Log("On race completed");
+
+		raceCompletedTime = Time.time;
 		ChangeGameSate(GameState.raceOver);
 	}
 	private void OnEnable()

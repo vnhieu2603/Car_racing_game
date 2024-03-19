@@ -9,9 +9,14 @@ public class LeaderboardUIHandler : MonoBehaviour
 
     SetLeaderBoard[] setLeaderBoard;
 
+	Canvas canvas;
+
 	void Awake()
 	{
-		
+		canvas = GetComponent<Canvas>();
+		canvas.enabled = false;
+
+		GameManager.instance.OnGameStateChanged += OnGameStateChanged;
 	}
 	// Start is called before the first frame update
 	void Start()
@@ -38,5 +43,18 @@ public class LeaderboardUIHandler : MonoBehaviour
         {
             setLeaderBoard[i].SetDriverNameText(lapCounters[i].gameObject.name);
         }
+    }
+
+	void OnGameStateChanged(GameManager gameManager)
+	{
+		if(GameManager.instance.GetGameState() == GameState.raceOver)
+		{
+			canvas.enabled = true;
+		}
+	}
+
+     void OnDestroy()
+    {
+		GameManager.instance.OnGameStateChanged -= OnGameStateChanged;
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class CarLapCounter : MonoBehaviour
 { 
@@ -15,7 +16,7 @@ public class CarLapCounter : MonoBehaviour
 	int numberOfPassedCheckpoint = 0;
 
 	int lapCompleted = 0;
-	const int lapsToComplete = 2;
+	const int lapsToComplete = 1;
 
 	bool isRaceCompleted = false;
 
@@ -23,8 +24,8 @@ public class CarLapCounter : MonoBehaviour
 	
 	//Events
 	public event Action<CarLapCounter> OnPassCheckpoint;
-
-	public void SetCarPositon(int position)
+   
+    public void SetCarPositon(int position)
 	{
 		carPosition = position;
 	}
@@ -91,9 +92,13 @@ public class CarLapCounter : MonoBehaviour
 					{
 						GameManager.instance.OnGameCompleted();
 						GetComponent<CarInputHandler>().enabled = false;
-						GetComponent<AICarHandler>().enabled = true;
-					}
-				} else if(checkpoint.isFinishLine) 
+
+                        GetComponent<AICarHandler>().enabled = true;
+
+                    }
+
+                }
+                else if(checkpoint.isFinishLine) 
 				{
 					StartCoroutine(ShowPositionCO(1.5f));
 				}

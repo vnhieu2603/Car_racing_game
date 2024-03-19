@@ -72,10 +72,7 @@ public class AICarHandler : MonoBehaviour
                 if(currentWayPoint.maxSpeed > 0)
                 {
                     maxSpeed = currentWayPoint.maxSpeed;
-                } else
-                {
-                    maxSpeed = 1000;
-                }
+                } 
                 //if we are close enough then go to the next way point
                 currentWayPoint = currentWayPoint.nextWayPointNode[0];
             }
@@ -104,13 +101,13 @@ public class AICarHandler : MonoBehaviour
     float TurnTowardTarget()
     {
         Vector2 vectorToTarget = targetPosition - transform.position;
-        Debug.Log("vector to target: "+ vectorToTarget);
+        //Debug.Log("vector to target: "+ vectorToTarget);
         vectorToTarget.Normalize();
 
         //calculate an angle towards the target
         float angleToTarget = Vector2.SignedAngle(transform.up, vectorToTarget);
   
-        Debug.Log("angel to target: " +  angleToTarget);
+        //Debug.Log("angel to target: " +  angleToTarget);
         angleToTarget *= -1;
 
         float steerAmount = angleToTarget / 45.0f;

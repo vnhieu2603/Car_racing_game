@@ -10,10 +10,15 @@ using System.Linq;
 public class NetworkRunnerHandler : MonoBehaviour
 {
     NetworkRunner networkRunner;
-    // Start is called before the first frame update
-    void Start()
+
+	private void Awake()
+	{
+		networkRunner = GetComponent<NetworkRunner>();
+	}
+	// Start is called before the first frame update
+	void Start()
     {
-        var clientTask = InitializeNetworkRunner(networkRunner, GameMode.Shared, NetAddress.Any(), SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex), null);
+        var clientTask = InitializeNetworkRunner(networkRunner, GameMode.AutoHostOrClient, NetAddress.Any(), SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex), null);
     }
 
     protected virtual Task InitializeNetworkRunner(NetworkRunner runner, GameMode gameMode, NetAddress address, SceneRef scene, Action<NetworkRunner> initialized)
@@ -24,6 +29,8 @@ public class NetworkRunnerHandler : MonoBehaviour
         {
             sceneObjectProvider = runner.gameObject.AddComponent<NetworkSceneManagerDefault>();
         }
+
+        runner.ProvideInput = true;
         return runner.StartGame(new StartGameArgs
         {
             GameMode = gameMode,

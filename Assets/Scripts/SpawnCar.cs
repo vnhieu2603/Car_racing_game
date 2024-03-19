@@ -8,7 +8,7 @@ public class SpawnCar : MonoBehaviour
     void Start()
     {
         GameObject[] spawnPoints = GameObject.FindGameObjectsWithTag("SpawnPoint");
-
+        Debug.Log(spawnPoints.Length);
         CarData[] carDatas = Resources.LoadAll<CarData>("CarData/");
 
         for(int i = 0; i < spawnPoints.Length; i++)
@@ -16,7 +16,7 @@ public class SpawnCar : MonoBehaviour
             Transform spawnPoint = spawnPoints[i].transform;
 
             int playerSelectedCarID = PlayerPrefs.GetInt($"P{i+1}SelectedCarID");
-
+            Debug.Log("playerSelectedCarID: " + playerSelectedCarID);
             //Find the player cars prefabs
             foreach( CarData carData in carDatas )
             {

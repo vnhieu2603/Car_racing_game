@@ -28,11 +28,13 @@ public class SelectCarUiHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        totalMap = SceneManager.sceneCountInBuildSettings;
+	
+		totalMap = SceneManager.sceneCountInBuildSettings;
 
 		carDatas = Resources.LoadAll<CarData>("CarData/");
         Debug.Log("Total scene: " + totalMap);
-		
+        selectedMap = "SampleScene";
+        mapText.text = selectedMap;
 		StartCoroutine(SpawnCarCO(true));
     }
 

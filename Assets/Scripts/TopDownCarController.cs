@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using Fusion;
 
 public class TopDownCarController : MonoBehaviour
 {
@@ -31,16 +32,18 @@ public class TopDownCarController : MonoBehaviour
 	//Components
 	Rigidbody2D carRigidbody2D;
 	Collider2D carCollider;
-
-	//Awake is called when the script instance is being loaded
-	void Awake()
+    //CarSurfaceHandle carSurfaceHandle;
+    //Awake is called when the script instance is being loaded
+    void Awake()
 	{
 		carRigidbody2D = GetComponent<Rigidbody2D>();
 		carCollider = GetComponentInChildren<Collider2D>();
-	}
+        //carSurfaceHandle = GetComponent<CarSurfaceHandle>();
 
-	// Start is called before the first frame update
-	void Start()
+    }
+
+    // Start is called before the first frame update
+    void Start()
 	{
 
 	}
@@ -51,12 +54,17 @@ public class TopDownCarController : MonoBehaviour
 
 	}
 
-	void FixedUpdate()
+	public void FixedUpdate()
 	{
 		if(GameManager.instance.GetGameState() == GameState.countDown)
 		{
-			return;
+		    return;
 		}
+		//if(GetInput(out NetworkInputData data))
+		//{
+		//	steeringInput = data.direction.x;
+		//	accelerationInput = data.direction.y;
+		//}
 		ApplyEngineForce();
 
 		killOrthogonalVelocity();
@@ -68,11 +76,11 @@ public class TopDownCarController : MonoBehaviour
 	{
 		//Calculate how much "forward" we are going in terms of the direction of our velocity
 		velocityVsUp = Vector2.Dot(transform.up, carRigidbody2D.velocity);
-		if(steeringInput != 0)
-		{
-			Debug.Log("Transform.up: " + transform.up + ", carRigidbody2D.velocity: " + carRigidbody2D.velocity + ", velocityVsUp: " + velocityVsUp + ", transform.right: "+ transform.right);
+		//if(steeringInput != 0)
+		//{
+		//	Debug.Log("Transform.up: " + transform.up + ", carRigidbody2D.velocity: " + carRigidbody2D.velocity + ", velocityVsUp: " + velocityVsUp + ", transform.right: "+ transform.right);
 
-		}
+		//}
 
 		if (velocityVsUp > maxSpeed && accelerationInput > 0)
 		{
@@ -89,16 +97,30 @@ public class TopDownCarController : MonoBehaviour
 			return;
 		}
 
-		//Apply drag if there is no accelerationInput so the car stops when the player lets go off the accelerator
-		if (accelerationInput == 0)
-		{
-			carRigidbody2D.drag = Mathf.Lerp(carRigidbody2D.drag, 3.0f, Time.fixedDeltaTime * 3);
-		} else
-		{
+        //Apply drag if there is no accelerationInput so the car stops when the player lets go off the accelerator
+        if (accelerationInput == 0)
+        {
+            carRigidbody2D.drag = Mathf.Lerp(carRigidbody2D.drag, 3.0f, Time.fixedDeltaTime * 3);
+        }
+        else
+        {
 			carRigidbody2D.drag = 0;
-		}
-		//Create a force for the engine
-		Vector2 engineForceVector = transform.up * accelerationInput * accelerationFactor;
+        }
+        //switch (GetSurface())
+        //{
+        //    case Surface.SurfaceType.Sand:
+        //        carRigidbody2D.drag = Mathf.Lerp(carRigidbody2D.drag, 15f, Time.fixedDeltaTime * 3);
+        //        break;
+        //    case Surface.SurfaceType.Grass:
+        //        carRigidbody2D.drag = Mathf.Lerp(carRigidbody2D.drag, 10f, Time.fixedDeltaTime * 3);
+        //        break;
+        //    case Surface.SurfaceType.Oil:
+        //        carRigidbody2D.drag = 0;
+        //        accelerationInput = Mathf.Clamp(accelerationInput, 0, 1f);
+        //        break;
+        //}
+        //Create a force for the engine
+        Vector2 engineForceVector = transform.up * accelerationInput * accelerationFactor;
 
 		//Apply force and pushes the car forward
 		carRigidbody2D.AddForce(engineForceVector, ForceMode2D.Force);
@@ -252,4 +274,9 @@ public class TopDownCarController : MonoBehaviour
 			Jump(jumpData.jumpHeightScale, jumpData.jumpPushScale);
 		}
 	}
+
+    //public Surface.SurfaceType GetSurface()
+    //{
+    //    return carSurfaceHandle.GetCurrentSurface();
+    //}
 }
