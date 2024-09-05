@@ -108,7 +108,14 @@ public class TopDownCarController : MonoBehaviour
         }
 		switch (GetSurface())
 		{
-			case Surface.SurfaceType.Sand:
+            case Surface.SurfaceType.SpeedUp:
+                velocityVsUp = 50;
+                maxSpeed = 50;
+                break;
+            case Surface.SurfaceType.Road:
+                maxSpeed = 20;
+                break;
+            case Surface.SurfaceType.Sand:
 				carRigidbody2D.drag = Mathf.Lerp(carRigidbody2D.drag, 15f, Time.fixedDeltaTime * 3);
 				break;
 			case Surface.SurfaceType.Grass:
@@ -153,7 +160,7 @@ public class TopDownCarController : MonoBehaviour
                 currentDriftFactor = 1.00f;
                 break;
             case Surface.SurfaceType.Grass:
-                currentDriftFactor = 1.05f;
+                currentDriftFactor = 0.7f;
                 break;
         }
         carRigidbody2D.velocity = forwardVelocity + rightVelocity * currentDriftFactor;

@@ -33,7 +33,7 @@ public class SelectCarUiHandler : MonoBehaviour
 
 		carDatas = Resources.LoadAll<CarData>("CarData/");
         Debug.Log("Total scene: " + totalMap);
-        selectedMap = "SampleScene";
+        selectedMap = "Training";
         mapText.text = selectedMap;
 		StartCoroutine(SpawnCarCO(true));
     }

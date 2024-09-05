@@ -793,6 +793,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 511888263434442470, guid: 92c5e07dbfa11fc46b74d457327d39d2, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 5.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 511888263434442470, guid: 92c5e07dbfa11fc46b74d457327d39d2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 41.2
+      objectReference: {fileID: 0}
     - target: {fileID: 557009177408331999, guid: 92c5e07dbfa11fc46b74d457327d39d2, type: 3}
       propertyPath: m_Name
       value: BG Image
@@ -812,6 +820,14 @@ PrefabInstance:
     - target: {fileID: 728534952575923675, guid: 92c5e07dbfa11fc46b74d457327d39d2, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 808676030311369691, guid: 92c5e07dbfa11fc46b74d457327d39d2, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 51.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 808676030311369691, guid: 92c5e07dbfa11fc46b74d457327d39d2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 34.5
       objectReference: {fileID: 0}
     - target: {fileID: 975535875754314800, guid: 92c5e07dbfa11fc46b74d457327d39d2, type: 3}
       propertyPath: m_Name

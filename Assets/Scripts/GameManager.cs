@@ -60,10 +60,16 @@ public class GameManager : MonoBehaviour
 
 	public float GetRaceTime()
 	{
-		if(gameState == GameState.raceOver)
+		if(gameState == GameState.countDown)
+		{
+			return 0;
+		} else if(gameState == GameState.raceOver)
 		{
 			return raceCompletedTime - raceStartedTime;
-		} else return Time.time - raceStartedTime;
+		} else
+		{
+			return  Time.time - raceStartedTime;
+		}
 	}
 	public void OnRaceStart()
 	{

@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
 public class MenuUIHandler : MonoBehaviour
 {
 
     Canvas canvas;
+    
     private void Awake()
     {
         canvas = GetComponent<Canvas>();
@@ -27,7 +27,7 @@ public class MenuUIHandler : MonoBehaviour
     IEnumerator ShowMenuCO()
     {
         yield return new WaitForSeconds(1);
-
+       
         canvas.enabled = true;
     }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Surface : MonoBehaviour
 {
     // Start is called before the first frame update
-    public enum SurfaceType { Road, Grass, Sand, Oil};
+    public enum SurfaceType { Road, Grass, Sand, Oil, SpeedUp};
 
     [Header("Surface")]
     public SurfaceType surfaceType;

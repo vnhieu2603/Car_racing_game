@@ -2,21 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class RaceTimeUIHandler : MonoBehaviour
 {
     TMP_Text timeText;
 
     float lastRaceTimeUpdate = 0;
-
+    Canvas canvas;
     private void Awake()
     {
+        canvas = GetComponent<Canvas>();
         timeText = GetComponent<TMP_Text>();
 
     }
     // Start is called before the first frame update
     void Start()
     {
+        
         StartCoroutine(UpdateTimeCO());
     }
 
